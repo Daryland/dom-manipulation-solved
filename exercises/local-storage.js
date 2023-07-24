@@ -38,3 +38,46 @@
  */
 
 // Your code goes here...
+
+const container = document.querySelector('.cardsContainer');
+const cards = document.querySelectorAll('.card');
+
+let storage = {
+  items: [],
+};
+
+const toggleFav = (item) => {
+  const id = item.getAttribute('id');
+  const isFav = item.dataset.fav === 'true';
+  item.classList.toggle('red', !isFav);
+  item.dataset.fav = isFav ? 'false' : 'true';
+
+  if (isFav) { //removes from storage
+    storage.items = storage.items.filter((itemId) => itemId !== id);
+  } else { //adds to storage
+    storage.items.push(id);
+  }
+  localStorage.setItem('favorites', JSON.stringify(storage));
+};
+
+const callbackFn = (e) => {
+  const item = e.target;
+  if (item.classList.contains('card')) {
+    toggleFav(item);
+  }
+};
+
+container.addEventListener('click', callbackFn);
+
+//loads favs
+const storageData = localStorage.getItem('favorites');
+if (storageData) {
+  storage = JSON.parse(storageData);
+  storage.items.forEach((itemId) => {
+    const item = document.getElementById(itemId);
+    if (item) {
+      item.dataset.fav = 'true';
+      item.classList.add('red');
+    }
+  })
+};
